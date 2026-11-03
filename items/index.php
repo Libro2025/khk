@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Europe/Vienna');
 if($_SESSION['user_id'] == null)
 {
     header('location:../index.php');

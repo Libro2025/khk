@@ -45,8 +45,20 @@ $(document).ready(function(){
         if (!qty || qty < 1) {
             swal('Ungültige Menge!');
         } else {
-            swal(item + ' - ' + qty);
-            $('#itemModal').modal('hide');
+            $.ajax({
+                type: 'POST',
+                url: '../api/addingItem.php',
+                data: {
+                    firstname: $('#firstname').val(),
+                    lastname: $('#lastname').val(),
+                    itemCategory: $('#selectItem').val(),
+                    itemName: item,
+                    itemQuantity: qty
+                },
+                success(data){
+                   $('#itemModal').modal('hide'); 
+                }
+            });
         }
     });
 
