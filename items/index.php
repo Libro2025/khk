@@ -43,6 +43,12 @@ if($_SESSION['user_id'] == null)
             <input id="firstname" type="hidden" value="<?php echo $_SESSION['firstname'] ?>">
             <input id="lastname" type="hidden" value="<?php echo $_SESSION['lastname'] ?>">
 
+            <div class="alert alert-secondary mt-2 text-center" role="alert">
+                <a href="../todayList.php" class="btn btn-primary px-4 shadow-sm">
+                    Heutige Einkaufsliste
+                </a>
+            </div>
+
             <div class="alert alert-secondary mt-2" role="alert">
                 <div class="form-inline justify-content-center my-lg-0">
                     <select id="selectItem" class="form-control form-control-sm w-auto">
