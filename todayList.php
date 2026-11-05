@@ -96,22 +96,35 @@ foreach ($result as $res) {
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item bg-light py-2">
                                 <div class="row font-weight-bold small text-muted">
-                                    <div class="col-6 col-sm-5">Artikel</div>
-                                    <div class="col-3 col-sm-2 text-center">Menge</div>
+                                    <div class="col-8 col-sm-5">Artikel</div>
+                                    <div class="col-4 col-sm-2 text-center">Menge</div>
                                     <div class="d-none d-sm-block col-sm-3">Eingetragen von</div>
-                                    <div class="col-3 col-sm-2 text-right">Uhrzeit</div>
+                                    <div class="d-none d-sm-block col-sm-2 text-right">Uhrzeit</div>
                                 </div>
                             </li>
                             <?php foreach ($items as $it) {
                                 printf(
-                                    '<li class="list-group-item list-group-item-action py-2">
+                                    '<li class="list-group-item list-group-item-action py-2 itemRow" style="cursor:pointer;"
+                                         data-kategorie="%s" data-artikel="%s" data-menge="%d"
+                                         data-person="%s %s" data-datum="%s" data-zeit="%s">
                                         <div class="row align-items-center">
-                                            <div class="col-6 col-sm-5 text-break">%s</div>
-                                            <div class="col-3 col-sm-2 text-center"><span class="badge badge-primary badge-pill px-3">%d</span></div>
+                                            <div class="col-8 col-sm-5 text-break">%s</div>
+                                            <div class="col-4 col-sm-2 text-center">
+                                                <span class="badge badge-primary badge-pill px-3">%d</span>
+                                                <i class="fas fa-chevron-right text-muted ml-2 d-sm-none"></i>
+                                            </div>
                                             <div class="d-none d-sm-block col-sm-3">%s %s</div>
-                                            <div class="col-3 col-sm-2 text-right text-muted">%s</div>
+                                            <div class="d-none d-sm-block col-sm-2 text-right text-muted">%s</div>
                                         </div>
                                      </li>',
+                                    // data attributes for the modal
+                                    e($labels[$cat] ?? $cat),
+                                    e($it['item_name']),
+                                    (int)$it['item_quantity'],
+                                    e($it['firstname']), e($it['lastname']),
+                                    e(date('d.m.Y', strtotime($it['item_date']))),
+                                    e(substr($it['item_time'], 0, 5)),
+                                    // visible columns
                                     e($it['item_name']),
                                     (int)$it['item_quantity'],
                                     e($it['firstname']), e($it['lastname']),
@@ -124,9 +137,61 @@ foreach ($result as $res) {
             <?php endif; ?>
         </div>
 
+        <!-- Detail modal (one for all records, filled on click) -->
+        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="detailTitle"></h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Schließen">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="text-muted"><i class="fas fa-tags fa-fw mr-2"></i>Kategorie</span>
+                                <strong id="detailKategorie"></strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="text-muted"><i class="fas fa-sort-numeric-up fa-fw mr-2"></i>Menge</span>
+                                <span class="badge badge-primary badge-pill px-3" id="detailMenge"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="text-muted"><i class="fas fa-user fa-fw mr-2"></i>Eingetragen von</span>
+                                <strong id="detailPerson"></strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="text-muted"><i class="fas fa-calendar-alt fa-fw mr-2"></i>Datum</span>
+                                <strong id="detailDatum"></strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="text-muted"><i class="fas fa-clock fa-fw mr-2"></i>Uhrzeit</span>
+                                <strong id="detailZeit"></strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
 			$("#backBtn").click(function () {
                 window.history.back();
+            });
+
+            $(document).on('click', '.itemRow', function () {
+                const row = $(this);
+                $('#detailTitle').text(row.attr('data-artikel'));
+                $('#detailKategorie').text(row.attr('data-kategorie'));
+                $('#detailMenge').text(row.attr('data-menge'));
+                $('#detailPerson').text(row.attr('data-person'));
+                $('#detailDatum').text(row.attr('data-datum'));
+                $('#detailZeit').text(row.attr('data-zeit') + ' Uhr');
+                $('#detailModal').modal('show');
             });
         </script>
     </body>
